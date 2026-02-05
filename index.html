@@ -3,88 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Serious Work Thing...</title>
+    <title>Journal of Applied Chemistry - Vol 42</title>
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Press+Start+2P&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 
     <style>
+        /* --- GLOBAL RESET & VARIABLES --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         :root {
+            /* Paper Theme */
+            --paper-bg: #fdfdfd;
+            --paper-text: #222;
+            --accent-blue: #0044cc;
+            
+            /* Arcade Theme */
             --neon-pink: #ff00ff;
             --neon-blue: #00ffff;
             --neon-green: #39ff14;
-            --neon-yellow: #fff01f;
-            --bg-color: #050505;
-            --grid-color: rgba(255, 0, 255, 0.2);
-            --card-bg: rgba(10, 10, 10, 0.85);
+            --neon-red: #ff3333;
+            --arcade-bg: #050505;
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
 
         body {
-            background-color: var(--bg-color);
-            color: white;
+            font-family: 'Merriweather', serif;
+            background-color: var(--paper-bg);
+            color: var(--paper-text);
+            transition: background-color 1s ease, color 1s ease;
+            overflow-x: hidden;
+            line-height: 1.8;
+        }
+
+        /* --- MODE 1: ACADEMIC PAPER --- */
+        #research-paper {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .paper-header { border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; text-align: center; }
+        .paper-title { font-size: 2.2rem; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .paper-meta { font-size: 0.9rem; color: #555; font-style: italic; }
+        
+        h2 { font-size: 1.4rem; margin-top: 30px; margin-bottom: 15px; border-left: 4px solid #ccc; padding-left: 10px; }
+        p { margin-bottom: 20px; text-align: justify; font-size: 1.05rem; }
+        
+        .figure { 
+            background: #eee; border: 1px solid #ccc; padding: 20px; 
+            margin: 20px 0; text-align: center; font-family: monospace; 
+            position: relative; overflow: hidden;
+        }
+        .chem-diagram { font-size: 2rem; font-weight: bold; color: #555; }
+        .caption { font-size: 0.8rem; color: #666; margin-top: 10px; font-style: italic; }
+
+        .citation { font-size: 0.8rem; color: #444; border-left: 2px solid #ddd; padding-left: 10px; margin-bottom: 10px; }
+
+        .hint-text {
+            font-size: 0.8rem; color: #888; border: 1px dashed #bbb; padding: 10px; margin-top: 20px; background: #f9f9f9;
+        }
+
+        .unlock-section { 
+            margin-top: 50px; padding-top: 20px; border-top: 1px solid #ddd; 
+            text-align: center; padding-bottom: 100px;
+        }
+        .unlock-btn {
+            background: #f0f0f0; border: 1px solid #999; color: #333;
+            padding: 12px 24px; font-family: 'Merriweather', serif; font-weight: bold;
+            cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .unlock-btn:hover { background: #e0e0e0; box-shadow: 0 6px 8px rgba(0,0,0,0.15); }
+
+        /* --- PASSWORD SECURITY MODAL --- */
+        #password-modal {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.95);
+            z-index: 20000;
+            display: none; /* Hidden initially */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Courier New', monospace;
+        }
+
+        .terminal-box {
+            border: 2px solid var(--neon-green);
+            padding: 40px;
+            background: #000;
+            box-shadow: 0 0 20px var(--neon-green);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .terminal-title {
+            color: var(--neon-green);
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        #pass-field {
+            background: #000;
+            color: var(--neon-green);
+            border: 1px solid #333;
+            padding: 15px;
+            width: 100%;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            text-align: center;
+            outline: none;
+            text-transform: uppercase;
+        }
+
+        #pass-field:focus { border-color: var(--neon-green); }
+        #pass-field.error { border-color: var(--neon-red); color: var(--neon-red); }
+
+        .error-msg {
+            color: var(--neon-red);
+            font-size: 0.9rem;
+            margin-top: 15px;
+            min-height: 20px;
+            display: none;
+        }
+
+        .shake { animation: shake 0.5s; border-color: var(--neon-red); }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(0); }
+        }
+
+        /* --- TRANSITION / HACK EFFECT --- */
+        #hack-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: red; color: white; z-index: 9999;
+            display: none; align-items: center; justify-content: center;
+            font-family: 'Courier New', monospace; font-size: 2rem;
+            font-weight: bold; letter-spacing: 5px;
+            text-shadow: 4px 4px 0 black;
+        }
+
+        /* --- MODE 2: ARCADE (Hidden initially) --- */
+        #arcade-system {
+            display: none; /* Controlled by JS */
+            width: 100vw; height: 100vh;
+            background-color: var(--arcade-bg);
             font-family: 'Rajdhani', sans-serif;
             overflow: hidden;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
 
-        /* --- FX & Background --- */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
+        /* CRT & FX */
+        body.mode-arcade {
+            background-color: var(--arcade-bg);
+            color: white;
+            overflow: hidden; 
+        }
+        body.mode-arcade #research-paper { display: none; }
+        body.mode-arcade #arcade-system { display: block; }
+
+        .scanlines {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-            z-index: 100;
+            background-size: 100% 2px, 3px 100%; pointer-events: none; z-index: 100;
         }
-
+        
         .retro-grid {
             position: fixed; bottom: -50%; left: -50%; width: 200%; height: 100%;
-            background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-            background-size: 50px 50px;
-            transform: perspective(500px) rotateX(60deg);
-            animation: gridMove 10s linear infinite;
-            z-index: -1;
+            background-image: linear-gradient(rgba(255, 0, 255, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 0, 255, 0.2) 1px, transparent 1px);
+            background-size: 50px 50px; transform: perspective(500px) rotateX(60deg);
+            animation: gridMove 10s linear infinite; z-index: -1;
             mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%);
         }
         @keyframes gridMove { 0% { transform: perspective(500px) rotateX(60deg) translateY(0); } 100% { transform: perspective(500px) rotateX(60deg) translateY(50px); } }
 
-        /* --- UI Screens --- */
+        /* Arcade UI */
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; position: absolute; top: 0; left: 0; }
         .active-screen { display: flex; }
 
-        /* --- Menu Screen --- */
-        header { text-align: center; padding: 1rem; animation: glitch 2s infinite; margin-bottom: 2rem; }
-        h1 { font-family: 'Press Start 2P', cursive; font-size: 3rem; color: white; text-shadow: 4px 4px 0px var(--neon-pink), -4px -4px 0px var(--neon-blue); margin-bottom: 10px; }
-        .subtitle { font-size: 1.5rem; color: var(--neon-yellow); letter-spacing: 5px; text-transform: uppercase; text-shadow: 0 0 10px var(--neon-yellow); }
+        header { text-align: center; padding: 1rem; margin-bottom: 2rem; }
+        h1.arcade-title { font-family: 'Press Start 2P', cursive; font-size: 3rem; color: white; text-shadow: 4px 4px 0px var(--neon-pink), -4px -4px 0px var(--neon-blue); margin-bottom: 10px; }
+        .subtitle { font-size: 1.5rem; color: var(--neon-green); letter-spacing: 5px; text-transform: uppercase; text-shadow: 0 0 10px var(--neon-green); }
 
-        #game-grid {
-            display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; max-width: 1200px; overflow-y: auto; max-height: 70vh;
-        }
+        #game-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; max-width: 1200px; overflow-y: auto; max-height: 70vh; }
 
         .game-card {
-            background: var(--card-bg); border: 2px solid var(--neon-blue);
+            background: rgba(10, 10, 10, 0.85); border: 2px solid var(--neon-blue);
             width: 250px; padding: 20px; cursor: pointer; text-align: center;
             box-shadow: 0 0 10px var(--neon-blue); transition: 0.3s;
         }
         .game-card:hover { transform: translateY(-5px); border-color: var(--neon-pink); box-shadow: 0 0 20px var(--neon-pink); }
         .game-card h3 { font-family: 'Press Start 2P'; font-size: 1rem; color: var(--neon-blue); margin-bottom: 10px; }
-        .game-card p { font-size: 0.9rem; margin-bottom: 15px; color: #ddd; }
-        .play-btn {
-            background: transparent; border: 2px solid white; color: white; padding: 8px 16px;
-            font-family: 'Press Start 2P'; font-size: 0.7rem; text-transform: uppercase; cursor: pointer;
-        }
+        .play-btn { background: transparent; border: 2px solid white; color: white; padding: 8px 16px; font-family: 'Press Start 2P'; font-size: 0.7rem; cursor: pointer; }
         .game-card:hover .play-btn { background: white; color: black; }
-        .game-card.locked { opacity: 0.5; pointer-events: none; border-color: #555; box-shadow: none; }
 
-        /* --- Game Screen --- */
+        /* Game Canvas Area */
         #game-header { width: 100%; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); z-index: 10; }
-        .back-btn { font-family: 'Press Start 2P'; font-size: 0.8rem; color: var(--neon-yellow); border: 1px solid var(--neon-yellow); background: transparent; padding: 5px 10px; cursor: pointer; text-decoration: none; }
-        .back-btn:hover { background: var(--neon-yellow); color: black; }
+        .back-btn { font-family: 'Press Start 2P'; font-size: 0.8rem; color: var(--neon-green); border: 1px solid var(--neon-green); background: transparent; padding: 5px 10px; cursor: pointer; }
         .score-display { font-family: 'Press Start 2P'; font-size: 1.2rem; color: white; }
 
         #game-wrapper { position: relative; box-shadow: 0 0 30px rgba(0,0,0,0.8); border: 4px solid #333; margin-top: 10px; }
@@ -92,104 +213,249 @@
 
         #game-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); display: flex; flex-direction: column;
+            background: rgba(0,0,0,0.9); display: flex; flex-direction: column;
             justify-content: center; align-items: center; z-index: 20; text-align: center;
         }
         #game-title { font-family: 'Press Start 2P'; font-size: 2rem; color: var(--neon-pink); margin-bottom: 20px; text-shadow: 0 0 10px var(--neon-pink); }
-        #game-message { font-size: 1.2rem; margin-bottom: 30px; line-height: 1.5; color: #ccc; }
-        .start-btn { font-family: 'Press Start 2P'; font-size: 1.2rem; color: var(--neon-green); border: 2px solid var(--neon-green); background: transparent; padding: 15px 30px; cursor: pointer; animation: pulse 1s infinite alternate; }
-        .start-btn:hover { background: var(--neon-green); color: black; }
+        .start-btn { font-family: 'Press Start 2P'; font-size: 1.2rem; color: var(--neon-blue); border: 2px solid var(--neon-blue); background: transparent; padding: 15px 30px; cursor: pointer; animation: pulse 1s infinite alternate; }
+        .start-btn:hover { background: var(--neon-blue); color: black; }
 
-        @keyframes pulse { from { text-shadow: 0 0 5px var(--neon-green); } to { text-shadow: 0 0 20px var(--neon-green); } }
-        @keyframes glitch { 2%, 64% { transform: translate(2px,0) skew(0deg); } 4%, 60% { transform: translate(-2px,0) skew(0deg); } 62% { transform: translate(0,0) skew(5deg); } }
+        @keyframes pulse { from { text-shadow: 0 0 5px var(--neon-blue); } to { text-shadow: 0 0 20px var(--neon-blue); } }
+        @keyframes glitchText { 0% { transform: translate(0); } 20% { transform: translate(-2px, 2px); } 40% { transform: translate(-2px, -2px); } 60% { transform: translate(2px, 2px); } 80% { transform: translate(2px, -2px); } 100% { transform: translate(0); } }
 
-        @media (max-width: 768px) {
-            h1 { font-size: 2rem; }
-            canvas { width: 100%; height: auto; }
-        }
     </style>
 </head>
 <body>
 
-    <!-- Background FX -->
-    <div class="retro-grid"></div>
-
-    <!-- MENU SCREEN -->
-    <div id="menu-screen" class="screen active-screen">
-        <header>
-            <h1>NEON ARCADE</h1>
-            <div class="subtitle">SELECT SYSTEM</div>
+    <!-- MODE 1: THE ACADEMIC PAPER -->
+    <div id="research-paper">
+        <header class="paper-header">
+            <div class="paper-title">Synthesis of Polychromatic Compounds</div>
+            <div class="paper-meta">Journal of Applied Chemistry, Vol 42, Issue 7</div>
+            <div class="paper-meta">Dr. A. Turing & Prof. C. Babbage</div>
         </header>
 
-        <div id="game-grid">
-            <!-- Game 1: Snake -->
-            <div class="game-card" onclick="arcadeSystem.loadGame('snake')">
-                <h3>NEON SNAKE</h3>
-                <p>Eat bits, grow longer, don't crash. Classic logic.</p>
-                <div class="play-btn">PLAY</div>
-            </div>
+        <section>
+            <h2>Abstract</h2>
+            <p>
+                This study investigates the thermodynamic properties of neon-infused hydrocarbons in a vacuum-sealed environment. Through rigorous catalytic reactivity tests, we observed distinct isomerization patterns that suggest a previously unknown state of matter. The implications for synthetic neuro-plasticity are profound, indicating that binary oscillations can be sustained within organic substrates.
+            </p>
+        </section>
 
-            <!-- Game 2: Shooter -->
-            <div class="game-card" onclick="arcadeSystem.loadGame('shooter')">
-                <h3>CYBER SHOOTER</h3>
-                <p>Defend the grid against viral invaders.</p>
-                <div class="play-btn">PLAY</div>
-            </div>
+        <section>
+            <h2>Introduction</h2>
+            <p>
+                For decades, the stability of glowing compounds has been a subject of debate in the chemical community. Standard lattice structures typically degrade under intense photonic stress. However, our recent experiments utilizing high-voltage capacitors have yielded surprising results. By introducing a "synth-wave" frequency modulator, we were able to sustain luminescence in a non-conductive fluid for over 48 hours.
+            </p>
+            <p>
+                The methodology involved standard reflux protocols, though modified to accommodate the volatile nature of the reagents. Safety protocols were strictly observed, though several instances of anomalous data spikes were recorded on the server logs.
+            </p>
+        </section>
 
-            <!-- Game 3: Runner -->
-            <div class="game-card" onclick="arcadeSystem.loadGame('runner')">
-                <h3>GRID RUNNER</h3>
-                <p>Sprint through the city. Jump the glitches.</p>
-                <div class="play-btn">PLAY</div>
-            </div>
+        <div class="figure">
+            <div class="chem-diagram">C<sub>8</sub>H<sub>11</sub>NO<sub>2</sub> + <span style="color:var(--neon-pink)">Li</span> &rarr; <span style="color:var(--neon-blue)">?</span></div>
+            <div class="caption">Fig 1. Molecular lattice structure showing unexpected resonance.</div>
+        </div>
 
-            <!-- Game 4: Dodger -->
-            <div class="game-card" onclick="arcadeSystem.loadGame('dodger')">
-                <h3>VOID DODGER</h3>
-                <p>Pilot through the asteroid belt. Survive.</p>
-                <div class="play-btn">PLAY</div>
-            </div>
+        <section>
+            <h2>Results</h2>
+            <p>
+                Data analysis indicates a correlation between the color frequency of the emitted light and the heart rate of the observer. This bio-feedback loop, while initially dismissed as equipment error, proved consistent across multiple trials. The compound, tentatively named "Retro-87," displays a tendency to arrange itself in grid-like formations when cooled to absolute zero.
+            </p>
+            <p>
+                Furthermore, the compound exhibits high affinity for digital interfaces, effectively "infecting" nearby silicon-based circuitry. We hypothesize that this is due to the unique arrangement of its valence electrons, which appear to cycle in a binary fashion.
+            </p>
+        </section>
+        
+        <section>
+            <h2>Conclusion</h2>
+            <p>
+                While the practical applications of "Retro-87" remain theoretical, the potential for creating self-sustaining energy sources is significant. We recommend further funding to explore the gaming... er, *gaming* of molecular structures. (Note: Typo in manuscript preserved for archival purposes).
+            </p>
+        </section>
 
-            <!-- Placeholder -->
-            <div class="game-card locked">
-                <h3>TRON CYCLES</h3>
-                <p>COMING SOON</p>
-                <div class="play-btn">LOCKED</div>
-            </div>
-             <!-- Placeholder -->
-             <div class="game-card locked">
-                <h3>HACKER PUZZLE</h3>
-                <p>COMING SOON</p>
-                <div class="play-btn">LOCKED</div>
-            </div>
+        <!-- THE HINT -->
+        <div class="hint-text">
+            <strong>Confidential Note:</strong> Secure files are encrypted... Hopefully you enjoy chemistry homework...
+        </div>
+
+        <section>
+            <h2>References</h2>
+            <div class="citation">1. Smith, J. (1982). "The Glow of the 80s." Modern Chemistry Today.</div>
+            <div class="citation">2. Doe, A. (1999). "Digital Synthesis and You." Applied Physics.</div>
+            <div class="citation">3. [REDACTED DATA SET 42]</div>
+        </section>
+
+        <div class="unlock-section">
+            <p style="text-align: center; font-style: italic; margin-bottom: 15px;">
+                *Restricted Data Set. Please verify credentials to access full synthesis logs.*
+            </p>
+            <button class="unlock-btn" onclick="showPasswordModal()">ACCESS FULL DATA SET</button>
         </div>
     </div>
 
-    <!-- GAMEPLAY SCREEN -->
-    <div id="game-screen" class="screen">
-        <div id="game-header">
-            <button class="back-btn" onclick="arcadeSystem.returnToMenu()">&lt; BACK TO ARCADE</button>
-            <div class="score-display">SCORE: <span id="score-val">0</span></div>
+    <!-- PASSWORD SECURITY MODAL -->
+    <div id="password-modal">
+        <div class="terminal-box">
+            <div class="terminal-title">SECURITY CHECKPOINT</div>
+            <div style="color:#666; margin-bottom:15px; font-size:0.8rem;">ENTER PASSWORD</div>
+            <input type="text" id="pass-field" autocomplete="off">
+            <div id="error-msg" class="error-msg">ACCESS DENIED</div>
+            <div style="margin-top:15px; font-size:0.7rem; color:#444;">PRESS ENTER TO SUBMIT</div>
         </div>
-        
-        <div id="game-wrapper">
-            <canvas id="game-canvas" width="800" height="600"></canvas>
-            
-            <div id="game-overlay">
-                <div id="game-title">GAME TITLE</div>
-                <div id="game-message">
-                    Press SPACE to Start<br>
-                    <span style="font-size: 0.8rem; color: #888;">Use ARROW KEYS to move</span>
+    </div>
+
+    <!-- HACK EFFECT OVERLAY -->
+    <div id="hack-overlay">
+        <div id="hack-text">BREACH DETECTED...</div>
+    </div>
+
+    <!-- MODE 2: ARCADE SYSTEM -->
+    <div id="arcade-system">
+        <!-- Background FX -->
+        <div class="scanlines"></div>
+        <div class="retro-grid"></div>
+
+        <!-- Menu Screen -->
+        <div id="menu-screen" class="screen active-screen">
+            <header>
+                <h1 class="arcade-title">NEON ARCADE</h1>
+                <div class="subtitle">DATA UNLOCKED // SELECT SYSTEM</div>
+            </header>
+
+            <div id="game-grid">
+                <!-- Game 1: Snake -->
+                <div class="game-card" onclick="arcadeSystem.loadGame('snake')">
+                    <h3>NEON SNAKE</h3>
+                    <p>Eat bits, grow longer. Classic logic.</p>
+                    <div class="play-btn">PLAY</div>
                 </div>
-                <button class="start-btn" onclick="arcadeSystem.startGame()">INSERT COIN</button>
+
+                <!-- Game 2: Shooter -->
+                <div class="game-card" onclick="arcadeSystem.loadGame('shooter')">
+                    <h3>CYBER SHOOTER</h3>
+                    <p>Defend the grid against viral invaders.</p>
+                    <div class="play-btn">PLAY</div>
+                </div>
+
+                <!-- Game 3: Runner -->
+                <div class="game-card" onclick="arcadeSystem.loadGame('runner')">
+                    <h3>GRID RUNNER</h3>
+                    <p>Sprint through the city. Jump the glitches.</p>
+                    <div class="play-btn">PLAY</div>
+                </div>
+
+                <!-- Game 4: Dodger -->
+                <div class="game-card" onclick="arcadeSystem.loadGame('dodger')">
+                    <h3>VOID DODGER</h3>
+                    <p>Pilot through the asteroid belt. Survive.</p>
+                    <div class="play-btn">PLAY</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gameplay Screen -->
+        <div id="game-screen" class="screen">
+            <div id="game-header">
+                <button class="back-btn" onclick="arcadeSystem.returnToMenu()">&lt; BACK TO MENU</button>
+                <div class="score-display">SCORE: <span id="score-val">0</span></div>
+            </div>
+            
+            <div id="game-wrapper">
+                <canvas id="game-canvas" width="800" height="600"></canvas>
+                
+                <div id="game-overlay">
+                    <div id="game-title">GAME TITLE</div>
+                    <div id="game-message" style="font-size: 1.2rem; margin: 20px 0; color: #ccc;">
+                        Arrows to Move<br>Space to Action
+                    </div>
+                    <button class="start-btn" onclick="arcadeSystem.startGame()">START GAME</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         /* =========================================
+           PASSWORD LOGIC
+           ========================================= */
+        const correctPassword = "CHEMHW";
+
+        function showPasswordModal() {
+            const modal = document.getElementById('password-modal');
+            const input = document.getElementById('pass-field');
+            const errorMsg = document.getElementById('error-msg');
+            
+            modal.style.display = 'flex';
+            input.value = '';
+            errorMsg.style.display = 'none';
+            input.classList.remove('error');
+            input.focus();
+
+            // Listen for Enter Key
+            input.onkeyup = function(e) {
+                if (e.key === "Enter") {
+                    validatePassword(input.value);
+                }
+            };
+        }
+
+        function validatePassword(inputVal) {
+            const input = document.getElementById('pass-field');
+            const errorMsg = document.getElementById('error-msg');
+            
+            if (inputVal.toUpperCase() === correctPassword) {
+                // Correct!
+                document.getElementById('password-modal').style.display = 'none';
+                initiateBreach(); // Trigger the hack sequence
+            } else {
+                // Incorrect
+                errorMsg.style.display = 'block';
+                input.classList.add('shake');
+                input.classList.add('error');
+                
+                // Remove shake class after animation so it can be re-triggered
+                setTimeout(() => {
+                    input.classList.remove('shake');
+                }, 500);
+            }
+        }
+
+        /* =========================================
+           TRANSITION LOGIC (The Hack)
+           ========================================= */
+        function initiateBreach() {
+            const body = document.body;
+            const overlay = document.getElementById('hack-overlay');
+            const hackText = document.getElementById('hack-text');
+            
+            // 1. Show Red Screen
+            overlay.style.display = 'flex';
+            
+            // 2. Glitch Text Sequence
+            let steps = 0;
+            const textInterval = setInterval(() => {
+                steps++;
+                if (steps === 1) hackText.innerText = "ACCESS GRANTED";
+                if (steps === 2) hackText.innerText = "LOADING MODULES...";
+                if (steps === 3) {
+                    hackText.innerText = "SYSTEM COMPROMISED";
+                    hackText.style.color = "black";
+                    hackText.style.backgroundColor = "white";
+                }
+                if (steps === 5) {
+                    clearInterval(textInterval);
+                    // 3. Switch Modes
+                    body.classList.add('mode-arcade');
+                    overlay.style.display = 'none';
+                    // 4. Initialize Audio Context
+                    if (arcadeSystem.audioCtx.state === 'suspended') arcadeSystem.audioCtx.resume();
+                }
+            }, 400);
+        }
+
+        /* =========================================
            ARCADE SYSTEM CORE
-           Handles switching between menu and games
            ========================================= */
         const arcadeSystem = {
             canvas: document.getElementById('game-canvas'),
@@ -197,27 +463,29 @@
             overlay: document.getElementById('game-overlay'),
             titleEl: document.getElementById('game-title'),
             msgEl: document.getElementById('game-message'),
-            btnEl: document.querySelector('.start-btn'),
             scoreEl: document.getElementById('score-val'),
             
             currentGameId: null,
             activeGame: null,
             isPlaying: false,
             animationFrameId: null,
+            audioCtx: new (window.AudioContext || window.webkitAudioContext)(),
 
-            // Initialize
             init: function() {
                 this.resizeCanvas();
                 window.addEventListener('resize', () => this.resizeCanvas());
                 document.addEventListener('keydown', (e) => this.handleInput(e));
+                document.addEventListener('keyup', (e) => {
+                     if (this.isPlaying && this.activeGame && this.activeGame.input) {
+                        this.activeGame.input(e);
+                    }
+                });
             },
 
             resizeCanvas: function() {
-                // Keep aspect ratio but fit screen
                 const aspect = 800/600;
                 const h = window.innerHeight - 100;
                 const w = h * aspect;
-                
                 if (w > window.innerWidth - 20) {
                     this.canvas.style.width = (window.innerWidth - 40) + 'px';
                     this.canvas.style.height = ((window.innerWidth - 40) / aspect) + 'px';
@@ -228,38 +496,29 @@
             },
 
             loadGame: function(gameId) {
-                // Stop anything running
                 this.stopGameLoop();
-                
-                // Switch Screens
                 document.getElementById('menu-screen').classList.remove('active-screen');
                 document.getElementById('game-screen').classList.add('active-screen');
 
-                // Setup specific game
                 this.currentGameId = gameId;
                 this.activeGame = games[gameId];
                 
-                // Reset Overlay
                 this.titleEl.innerText = this.activeGame.name;
                 this.msgEl.innerHTML = this.activeGame.instructions;
-                this.btnEl.innerText = "INSERT COIN";
                 this.overlay.style.display = 'flex';
                 this.scoreEl.innerText = '0';
                 
-                // Init Game logic
                 this.activeGame.init(this.ctx, this.canvas);
-                
-                // Draw initial frame so it's not black
                 this.activeGame.draw();
+                
+                this.playSound(440, 'square', 0.1);
             },
 
             startGame: function() {
                 if (!this.activeGame) return;
-                
                 this.overlay.style.display = 'none';
                 this.isPlaying = true;
                 this.scoreEl.innerText = '0';
-                
                 this.activeGame.reset();
                 this.gameLoop();
             },
@@ -268,7 +527,7 @@
                 this.isPlaying = false;
                 this.overlay.style.display = 'flex';
                 this.msgEl.innerHTML = `GAME OVER<br>SCORE: ${finalScore}`;
-                this.btnEl.innerText = "TRY AGAIN";
+                this.playSound(150, 'sawtooth', 0.3);
             },
 
             returnToMenu: function() {
@@ -285,19 +544,13 @@
 
             gameLoop: function() {
                 if (!this.isPlaying) return;
-
-                // Clear Canvas
                 this.ctx.fillStyle = '#050505';
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-                // Update & Draw
+                
                 const status = this.activeGame.update();
                 this.activeGame.draw();
-
-                // Update Score UI
                 this.scoreEl.innerText = this.activeGame.score;
 
-                // Check Game Over
                 if (status === 'GAME_OVER') {
                     this.gameOver(this.activeGame.score);
                 } else {
@@ -307,461 +560,70 @@
 
             handleInput: function(e) {
                 if (this.isPlaying && this.activeGame) {
-                    if (e.code === 'Space') {
-                        e.preventDefault(); // Stop scrolling
-                    }
+                    if (e.code === 'Space') e.preventDefault();
                     this.activeGame.input(e);
                 }
+            },
+
+            playSound: function(freq, type, duration) {
+                const osc = this.audioCtx.createOscillator();
+                const gain = this.audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, this.audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.1, this.audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(this.audioCtx.destination);
+                osc.start();
+                osc.stop(this.audioCtx.currentTime + duration);
             }
         };
 
         /* =========================================
-           GAME ENGINE / LOGIC CLASSES
+           GAME LOGIC (Compressed for brevity, fully functional)
            ========================================= */
-        
         const games = {
-            // --- 1. NEON SNAKE ---
             'snake': {
-                name: "NEON SNAKE",
-                instructions: "Arrows to Move. Eat green blocks. Don't hit walls or tail.",
-                score: 0,
-                grid: 20,
-                snake: [],
-                direction: 'RIGHT',
-                nextDirection: 'RIGHT',
-                food: {x: 0, y: 0},
-                timer: 0,
-                speed: 5, // Updates per second
-                
-                init: function(ctx, canvas) {
-                    this.ctx = ctx;
-                    this.canvas = canvas;
-                    this.cols = canvas.width / this.grid;
-                    this.rows = canvas.height / this.grid;
-                    this.reset();
-                },
-
-                reset: function() {
-                    this.snake = [{x: 10, y: 10}, {x: 9, y: 10}, {x: 8, y: 10}];
-                    this.direction = 'RIGHT';
-                    this.nextDirection = 'RIGHT';
-                    this.score = 0;
-                    this.placeFood();
-                },
-
-                placeFood: function() {
-                    this.food = {
-                        x: Math.floor(Math.random() * this.cols),
-                        y: Math.floor(Math.random() * this.rows)
-                    };
-                    // Don't place on snake
-                    for(let part of this.snake) {
-                        if(part.x === this.food.x && part.y === this.food.y) this.placeFood();
-                    }
-                },
-
-                input: function(e) {
-                    const key = e.key;
-                    if ((key === 'ArrowLeft' || key === 'a') && this.direction !== 'RIGHT') this.nextDirection = 'LEFT';
-                    if ((key === 'ArrowUp' || key === 'w') && this.direction !== 'DOWN') this.nextDirection = 'UP';
-                    if ((key === 'ArrowRight' || key === 'd') && this.direction !== 'LEFT') this.nextDirection = 'RIGHT';
-                    if ((key === 'ArrowDown' || key === 's') && this.direction !== 'UP') this.nextDirection = 'DOWN';
-                },
-
-                update: function() {
-                    // Throttle speed
-                    this.timer++;
-                    if (this.timer < (60 / this.speed)) return 'OK';
-                    this.timer = 0;
-
-                    this.direction = this.nextDirection;
-                    const head = { ...this.snake[0] };
-
-                    if (this.direction === 'LEFT') head.x--;
-                    if (this.direction === 'UP') head.y--;
-                    if (this.direction === 'RIGHT') head.x++;
-                    if (this.direction === 'DOWN') head.y++;
-
-                    // Wall Collision
-                    if (head.x < 0 || head.x >= this.cols || head.y < 0 || head.y >= this.rows) return 'GAME_OVER';
-                    
-                    // Self Collision
-                    for (let part of this.snake) {
-                        if (head.x === part.x && head.y === part.y) return 'GAME_OVER';
-                    }
-
-                    this.snake.unshift(head);
-
-                    // Eat Food
-                    if (head.x === this.food.x && head.y === this.food.y) {
-                        this.score += 10;
-                        this.speed = Math.min(15, 5 + Math.floor(this.score / 50)); // Increase speed
-                        this.placeFood();
-                    } else {
-                        this.snake.pop();
-                    }
-
-                    return 'OK';
-                },
-
-                draw: function() {
-                    // Draw Food
-                    this.ctx.shadowBlur = 15;
-                    this.ctx.shadowColor = '#39ff14';
-                    this.ctx.fillStyle = '#39ff14';
-                    this.ctx.fillRect(this.food.x * this.grid, this.food.y * this.grid, this.grid - 2, this.grid - 2);
-
-                    // Draw Snake
-                    this.ctx.shadowBlur = 10;
-                    this.ctx.shadowColor = '#00ffff';
-                    this.snake.forEach((part, index) => {
-                        this.ctx.fillStyle = index === 0 ? '#fff' : '#00ffff'; // White head
-                        this.ctx.fillRect(part.x * this.grid, part.y * this.grid, this.grid - 2, this.grid - 2);
-                    });
-                    
-                    // Reset effects
-                    this.ctx.shadowBlur = 0;
-                }
+                name: "NEON SNAKE", instructions: "Arrows to Move. Eat green blocks. Don't hit walls or tail.",
+                score: 0, grid: 20, snake: [], direction: 'RIGHT', nextDirection: 'RIGHT', food: {x:0,y:0}, timer: 0, speed: 5,
+                init: function(ctx, canvas) { this.ctx = ctx; this.canvas = canvas; this.cols = canvas.width / this.grid; this.rows = canvas.height / this.grid; this.reset(); },
+                reset: function() { this.snake = [{x:10,y:10},{x:9,y:10},{x:8,y:10}]; this.direction = 'RIGHT'; this.nextDirection = 'RIGHT'; this.score = 0; this.placeFood(); },
+                placeFood: function() { this.food = {x:Math.floor(Math.random()*this.cols), y:Math.floor(Math.random()*this.rows)}; for(let p of this.snake) if(p.x === this.food.x && p.y === this.food.y) this.placeFood(); },
+                input: function(e) { const k = e.key; if((k==='ArrowLeft'||k==='a')&&this.direction!=='RIGHT')this.nextDirection='LEFT'; if((k==='ArrowUp'||k==='w')&&this.direction!=='DOWN')this.nextDirection='UP'; if((k==='ArrowRight'||k==='d')&&this.direction!=='LEFT')this.nextDirection='RIGHT'; if((k==='ArrowDown'||k==='s')&&this.direction!=='UP')this.nextDirection='DOWN'; },
+                update: function() { this.timer++; if(this.timer < 60/this.speed)return 'OK'; this.timer=0; this.direction=this.nextDirection; const h={...this.snake[0]}; if(this.direction==='LEFT')h.x--; if(this.direction==='UP')h.y--; if(this.direction==='RIGHT')h.x++; if(this.direction==='DOWN')h.y++; if(h.x<0||h.x>=this.cols||h.y<0||h.y>=this.rows)return 'GAME_OVER'; for(let p of this.snake)if(h.x===p.x&&h.y===p.y)return 'GAME_OVER'; this.snake.unshift(h); if(h.x===this.food.x&&h.y===this.food.y){this.score+=10;this.speed=Math.min(15,5+Math.floor(this.score/50));this.placeFood();}else this.snake.pop(); return 'OK'; },
+                draw: function() { this.ctx.shadowBlur=15; this.ctx.shadowColor='#39ff14'; this.ctx.fillStyle='#39ff14'; this.ctx.fillRect(this.food.x*this.grid,this.food.y*this.grid,this.grid-2,this.grid-2); this.ctx.shadowBlur=10; this.ctx.shadowColor='#00ffff'; this.snake.forEach((p,i)=>{this.ctx.fillStyle=i===0?'#fff':'#00ffff';this.ctx.fillRect(p.x*this.grid,p.y*this.grid,this.grid-2,this.grid-2);}); this.ctx.shadowBlur=0; }
             },
-
-            // --- 2. CYBER SHOOTER ---
             'shooter': {
-                name: "CYBER SHOOTER",
-                instructions: "Arrows to Move. Space to Shoot. Destroy incoming enemies.",
-                score: 0,
-                player: { x: 400, y: 550, w: 30, h: 30 },
-                bullets: [],
-                enemies: [],
-                enemyTimer: 0,
-                keys: {},
-
-                init: function(ctx, canvas) {
-                    this.ctx = ctx;
-                    this.canvas = canvas;
-                    this.reset();
-                },
-
-                reset: function() {
-                    this.score = 0;
-                    this.player.x = this.canvas.width / 2 - 15;
-                    this.bullets = [];
-                    this.enemies = [];
-                    this.keys = {};
-                },
-
-                input: function(e) {
-                    if (e.type === 'keydown') {
-                        this.keys[e.key] = true;
-                        if (e.code === 'Space') {
-                            this.shoot();
-                        }
-                    }
-                    if (e.type === 'keyup') {
-                        this.keys[e.key] = false;
-                    }
-                },
-
-                shoot: function() {
-                    if(this.bullets.length < 10) { // Limit bullets
-                        this.bullets.push({ x: this.player.x + 12, y: this.player.y, w: 6, h: 10 });
-                    }
-                },
-
-                update: function() {
-                    // Move Player
-                    if (this.keys['ArrowLeft'] && this.player.x > 0) this.player.x -= 7;
-                    if (this.keys['ArrowRight'] && this.player.x < this.canvas.width - this.player.w) this.player.x += 7;
-
-                    // Move Bullets
-                    this.bullets.forEach(b => b.y -= 10);
-                    this.bullets = this.bullets.filter(b => b.y > -20);
-
-                    // Spawn Enemies
-                    this.enemyTimer++;
-                    if (this.enemyTimer > 40) {
-                        this.enemyTimer = 0;
-                        const size = 30;
-                        this.enemies.push({
-                            x: Math.random() * (this.canvas.width - size),
-                            y: -size,
-                            w: size, h: size,
-                            speed: 2 + Math.random() * 3
-                        });
-                    }
-
-                    // Move Enemies & Collision
-                    for (let i = this.enemies.length - 1; i >= 0; i--) {
-                        let e = this.enemies[i];
-                        e.y += e.speed;
-
-                        // Collision with Bullets
-                        for (let j = this.bullets.length - 1; j >= 0; j--) {
-                            let b = this.bullets[j];
-                            if (b.x < e.x + e.w && b.x + b.w > e.x && b.y < e.y + e.h && b.y + b.h > e.y) {
-                                // Hit
-                                this.enemies.splice(i, 1);
-                                this.bullets.splice(j, 1);
-                                this.score += 100;
-                                break;
-                            }
-                        }
-
-                        // Collision with Player
-                        if (e.y + e.h > this.player.y && e.x < this.player.x + this.player.w && e.x + e.w > this.player.x) {
-                            return 'GAME_OVER';
-                        }
-
-                        // Remove off screen
-                        if (e.y > this.canvas.height) this.enemies.splice(i, 1);
-                    }
-
-                    return 'OK';
-                },
-
-                draw: function() {
-                    // Player
-                    this.ctx.shadowBlur = 15;
-                    this.ctx.shadowColor = '#ff00ff';
-                    this.ctx.fillStyle = '#ff00ff';
-                    this.ctx.fillRect(this.player.x, this.player.y, this.player.w, this.player.h);
-
-                    // Bullets
-                    this.ctx.shadowColor = '#fff01f';
-                    this.ctx.fillStyle = '#fff01f';
-                    this.bullets.forEach(b => this.ctx.fillRect(b.x, b.y, b.w, b.h));
-
-                    // Enemies
-                    this.ctx.shadowColor = '#ff0000';
-                    this.ctx.fillStyle = '#ff0000';
-                    this.enemies.forEach(e => this.ctx.fillRect(e.x, e.y, e.w, e.h));
-                    
-                    this.ctx.shadowBlur = 0;
-                }
+                name: "CYBER SHOOTER", instructions: "Arrows to Move. Space to Shoot. Destroy enemies.",
+                score: 0, player: {x:400,y:550,w:30,h:30}, bullets:[], enemies:[], enemyTimer:0, keys:{},
+                init: function(ctx, canvas){this.ctx=ctx;this.canvas=canvas;this.reset();},
+                reset: function(){this.score=0;this.player.x=this.canvas.width/2-15;this.bullets=[];this.enemies=[];this.keys={};},
+                input: function(e){if(e.type==='keydown'){this.keys[e.key]=true;if(e.code==='Space')this.shoot();}if(e.type==='keyup')this.keys[e.key]=false;},
+                shoot: function(){if(this.bullets.length<10)this.bullets.push({x:this.player.x+12,y:this.player.y,w:6,h:10});},
+                update: function(){if(this.keys['ArrowLeft']&&this.player.x>0)this.player.x-=7;if(this.keys['ArrowRight']&&this.player.x<this.canvas.width-this.player.w)this.player.x+=7;this.bullets.forEach(b=>b.y-=10);this.bullets=this.bullets.filter(b=>b.y>-20);this.enemyTimer++;if(this.enemyTimer>40){this.enemyTimer=0;const s=30;this.enemies.push({x:Math.random()*(this.canvas.width-s),y:-s,w:s,h:s,speed:2+Math.random()*3});}for(let i=this.enemies.length-1;i>=0;i--){let e=this.enemies[i];e.y+=e.speed;for(let j=this.bullets.length-1;j>=0;j--){let b=this.bullets[j];if(b.x<e.x+e.w&&b.x+b.w>e.x&&b.y<e.y+e.h&&b.y+b.h>e.y){this.enemies.splice(i,1);this.bullets.splice(j,1);this.score+=100;break;}}if(e.y+e.h>this.player.y&&e.x<this.player.x+this.player.w&&e.x+e.w>this.player.x)return 'GAME_OVER';if(e.y>this.canvas.height)this.enemies.splice(i,1);}return 'OK';},
+                draw: function(){this.ctx.shadowBlur=15;this.ctx.shadowColor='#ff00ff';this.ctx.fillStyle='#ff00ff';this.ctx.fillRect(this.player.x,this.player.y,this.player.w,this.player.h);this.ctx.shadowColor='#fff01f';this.ctx.fillStyle='#fff01f';this.bullets.forEach(b=>this.ctx.fillRect(b.x,b.y,b.w,b.h));this.ctx.shadowColor='#ff0000';this.ctx.fillStyle='#ff0000';this.enemies.forEach(e=>this.ctx.fillRect(e.x,e.y,e.w,e.h));this.ctx.shadowBlur=0;}
             },
-
-            // --- 3. GRID RUNNER ---
             'runner': {
-                name: "GRID RUNNER",
-                instructions: "Space or Up Arrow to Jump. Avoid the red pillars.",
-                score: 0,
-                player: { x: 100, y: 0, w: 30, h: 30, dy: 0, grounded: true },
-                gravity: 0.8,
-                jumpPower: -15,
-                obstacles: [],
-                groundY: 500,
-                speed: 6,
-                frame: 0,
-
-                init: function(ctx, canvas) {
-                    this.ctx = ctx;
-                    this.canvas = canvas;
-                    this.groundY = canvas.height - 50;
-                    this.reset();
-                },
-
-                reset: function() {
-                    this.score = 0;
-                    this.player.y = this.groundY - this.player.h;
-                    this.player.dy = 0;
-                    this.obstacles = [];
-                    this.speed = 6;
-                    this.frame = 0;
-                },
-
-                input: function(e) {
-                    if ((e.code === 'Space' || e.key === 'ArrowUp') && this.player.grounded) {
-                        this.player.dy = this.jumpPower;
-                        this.player.grounded = false;
-                    }
-                },
-
-                update: function() {
-                    this.frame++;
-                    this.score++;
-
-                    // Physics
-                    this.player.dy += this.gravity;
-                    this.player.y += this.player.dy;
-
-                    if (this.player.y > this.groundY - this.player.h) {
-                        this.player.y = this.groundY - this.player.h;
-                        this.player.dy = 0;
-                        this.player.grounded = true;
-                    }
-
-                    // Spawn Obstacles
-                    if (this.frame % 90 === 0 || (Math.random() < 0.01 && this.frame > 100)) {
-                        this.obstacles.push({
-                            x: this.canvas.width,
-                            y: this.groundY - 40,
-                            w: 30,
-                            h: 40
-                        });
-                        this.speed += 0.1; // Slowly increase speed
-                    }
-
-                    // Move Obstacles
-                    for (let i = this.obstacles.length - 1; i >= 0; i--) {
-                        let o = this.obstacles[i];
-                        o.x -= this.speed;
-
-                        // Collision
-                        if (
-                            this.player.x < o.x + o.w &&
-                            this.player.x + this.player.w > o.x &&
-                            this.player.y < o.y + o.h &&
-                            this.player.y + this.player.h > o.y
-                        ) {
-                            return 'GAME_OVER';
-                        }
-
-                        if (o.x + o.w < 0) this.obstacles.splice(i, 1);
-                    }
-
-                    return 'OK';
-                },
-
-                draw: function() {
-                    // Ground Line
-                    this.ctx.strokeStyle = '#00ffff';
-                    this.ctx.lineWidth = 2;
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(0, this.groundY);
-                    this.ctx.lineTo(this.canvas.width, this.groundY);
-                    this.ctx.stroke();
-
-                    // Player
-                    this.ctx.shadowBlur = 10;
-                    this.ctx.shadowColor = '#00ffff';
-                    this.ctx.fillStyle = '#00ffff';
-                    this.ctx.fillRect(this.player.x, this.player.y, this.player.w, this.player.h);
-
-                    // Obstacles
-                    this.ctx.shadowColor = '#ff0000';
-                    this.ctx.fillStyle = '#ff0000';
-                    this.obstacles.forEach(o => this.ctx.fillRect(o.x, o.y, o.w, o.h));
-                    
-                    this.ctx.shadowBlur = 0;
-                }
+                name: "GRID RUNNER", instructions: "Space/Up to Jump. Avoid red pillars.",
+                score: 0, player: {x:100,y:0,w:30,h:30,dy:0,grounded:true}, gravity:0.8, jumpPower:-15, obstacles:[], groundY:500, speed:6, frame:0,
+                init: function(ctx, canvas){this.ctx=ctx;this.canvas=canvas;this.groundY=canvas.height-50;this.reset();},
+                reset: function(){this.score=0;this.player.y=this.groundY-this.player.h;this.player.dy=0;this.obstacles=[];this.speed=6;this.frame=0;},
+                input: function(e){if((e.code==='Space'||e.key==='ArrowUp')&&this.player.grounded){this.player.dy=this.jumpPower;this.player.grounded=false;}},
+                update: function(){this.frame++;this.score++;this.player.dy+=this.gravity;this.player.y+=this.player.dy;if(this.player.y>this.groundY-this.player.h){this.player.y=this.groundY-this.player.h;this.player.dy=0;this.player.grounded=true;}if(this.frame%90===0||(Math.random()<0.01&&this.frame>100)){this.obstacles.push({x:this.canvas.width,y:this.groundY-40,w:30,h:40});this.speed+=0.1;}for(let i=this.obstacles.length-1;i>=0;i--){let o=this.obstacles[i];o.x-=this.speed;if(this.player.x<o.x+o.w&&this.player.x+this.player.w>o.x&&this.player.y<o.y+o.h&&this.player.y+this.player.h>o.y)return 'GAME_OVER';if(o.x+o.w<0)this.obstacles.splice(i,1);}return 'OK';},
+                draw: function(){this.ctx.strokeStyle='#00ffff';this.ctx.lineWidth=2;this.ctx.beginPath();this.ctx.moveTo(0,this.groundY);this.ctx.lineTo(this.canvas.width,this.groundY);this.ctx.stroke();this.ctx.shadowBlur=10;this.ctx.shadowColor='#00ffff';this.ctx.fillStyle='#00ffff';this.ctx.fillRect(this.player.x,this.player.y,this.player.w,this.player.h);this.ctx.shadowColor='#ff0000';this.ctx.fillStyle='#ff0000';this.obstacles.forEach(o=>this.ctx.fillRect(o.x,o.y,o.w,o.h));this.ctx.shadowBlur=0;}
             },
-
-            // --- 4. VOID DODGER ---
             'dodger': {
-                name: "VOID DODGER",
-                instructions: "Arrow Keys to move freely. Don't touch the floating debris.",
-                score: 0,
-                player: { x: 400, y: 300, r: 10 },
-                rocks: [],
-                frame: 0,
-
-                init: function(ctx, canvas) {
-                    this.ctx = ctx;
-                    this.canvas = canvas;
-                    this.reset();
-                },
-
-                reset: function() {
-                    this.score = 0;
-                    this.player.x = this.canvas.width / 2;
-                    this.player.y = this.canvas.height / 2;
-                    this.rocks = [];
-                    this.frame = 0;
-                },
-
-                input: function(e) {
-                    const speed = 8;
-                    if (e.key === 'ArrowUp') this.player.y -= speed;
-                    if (e.key === 'ArrowDown') this.player.y += speed;
-                    if (e.key === 'ArrowLeft') this.player.x -= speed;
-                    if (e.key === 'ArrowRight') this.player.x += speed;
-
-                    // Boundaries
-                    this.player.x = Math.max(10, Math.min(this.canvas.width - 10, this.player.x));
-                    this.player.y = Math.max(10, Math.min(this.canvas.height - 10, this.player.y));
-                },
-
-                update: function() {
-                    this.frame++;
-                    if(this.frame % 10 === 0) this.score++;
-
-                    // Spawn Rocks (Edges only)
-                    if (this.frame % 20 === 0) {
-                        const side = Math.floor(Math.random() * 4); // 0:top, 1:right, 2:bottom, 3:left
-                        let r = 15 + Math.random() * 20;
-                        let x, y, dx, dy;
-                        const speed = 3 + (this.score / 500);
-
-                        if (side === 0) { x = Math.random()*this.canvas.width; y = -r; dx = (Math.random()-0.5)*2; dy = speed; }
-                        else if (side === 1) { x = this.canvas.width+r; y = Math.random()*this.canvas.height; dx = -speed; dy = (Math.random()-0.5)*2; }
-                        else if (side === 2) { x = Math.random()*this.canvas.width; y = this.canvas.height+r; dx = (Math.random()-0.5)*2; dy = -speed; }
-                        else { x = -r; y = Math.random()*this.canvas.height; dx = speed; dy = (Math.random()-0.5)*2; }
-
-                        this.rocks.push({x, y, dx, dy, r});
-                    }
-
-                    // Update Rocks
-                    for (let i = this.rocks.length - 1; i >= 0; i--) {
-                        let rock = this.rocks[i];
-                        rock.x += rock.dx;
-                        rock.y += rock.dy;
-
-                        // Collision (Circle vs Circle)
-                        const dist = Math.hypot(this.player.x - rock.x, this.player.y - rock.y);
-                        if (dist < this.player.r + rock.r) return 'GAME_OVER';
-
-                        // Remove offscreen
-                        if (rock.x < -50 || rock.x > this.canvas.width+50 || rock.y < -50 || rock.y > this.canvas.height+50) {
-                            this.rocks.splice(i, 1);
-                        }
-                    }
-
-                    return 'OK';
-                },
-
-                draw: function() {
-                    // Player
-                    this.ctx.shadowBlur = 15;
-                    this.ctx.shadowColor = '#ffffff';
-                    this.ctx.fillStyle = '#ffffff';
-                    this.ctx.beginPath();
-                    this.ctx.arc(this.player.x, this.player.y, this.player.r, 0, Math.PI*2);
-                    this.ctx.fill();
-
-                    // Rocks
-                    this.ctx.shadowColor = '#888888';
-                    this.ctx.strokeStyle = '#888888';
-                    this.ctx.lineWidth = 2;
-                    this.rocks.forEach(rock => {
-                        this.ctx.beginPath();
-                        this.ctx.moveTo(rock.x, rock.y - rock.r);
-                        for(let i=0; i<6; i++) {
-                            const angle = (i * 60 * Math.PI) / 180;
-                            const r = rock.r * (0.8 + Math.random()*0.4); // Jagged look
-                            const rx = rock.x + Math.cos(angle) * r;
-                            const ry = rock.y + Math.sin(angle) * r;
-                            this.ctx.lineTo(rx, ry);
-                        }
-                        this.ctx.closePath();
-                        this.ctx.stroke();
-                    });
-                    
-                    this.ctx.shadowBlur = 0;
-                }
+                name: "VOID DODGER", instructions: "Arrows to move freely. Don't touch the debris.",
+                score: 0, player: {x:400,y:300,r:10}, rocks:[], frame:0,
+                init: function(ctx, canvas){this.ctx=ctx;this.canvas=canvas;this.reset();},
+                reset: function(){this.score=0;this.player.x=this.canvas.width/2;this.player.y=this.canvas.height/2;this.rocks=[];this.frame=0;},
+                input: function(e){const s=8;if(e.key==='ArrowUp')this.player.y-=s;if(e.key==='ArrowDown')this.player.y+=s;if(e.key==='ArrowLeft')this.player.x-=s;if(e.key==='ArrowRight')this.player.x+=s;this.player.x=Math.max(10,Math.min(this.canvas.width-10,this.player.x));this.player.y=Math.max(10,Math.min(this.canvas.height-10,this.player.y));},
+                update: function(){this.frame++;if(this.frame%10===0)this.score++;if(this.frame%20===0){const side=Math.floor(Math.random()*4);let r=15+Math.random()*20;let x,y,dx,dy;const sp=3+(this.score/500);if(side===0){x=Math.random()*this.canvas.width;y=-r;dx=(Math.random()-0.5)*2;dy=sp;}else if(side===1){x=this.canvas.width+r;y=Math.random()*this.canvas.height;dx=-sp;dy=(Math.random()-0.5)*2;}else if(side===2){x=Math.random()*this.canvas.width;y=this.canvas.height+r;dx=(Math.random()-0.5)*2;dy=-sp;}else{x=-r;y=Math.random()*this.canvas.height;dx=sp;dy=(Math.random()-0.5)*2;}this.rocks.push({x,y,dx,dy,r});}for(let i=this.rocks.length-1;i>=0;i--){let rk=this.rocks[i];rk.x+=rk.dx;rk.y+=rk.dy;const dist=Math.hypot(this.player.x-rk.x,this.player.y-rk.y);if(dist<this.player.r+rk.r)return 'GAME_OVER';if(rk.x<-50||rk.x>this.canvas.width+50||rk.y<-50||rk.y>this.canvas.height+50)this.rocks.splice(i,1);}return 'OK';},
+                draw: function(){this.ctx.shadowBlur=15;this.ctx.shadowColor='#fff';this.ctx.fillStyle='#fff';this.ctx.beginPath();this.ctx.arc(this.player.x,this.player.y,this.player.r,0,Math.PI*2);this.ctx.fill();this.ctx.shadowColor='#888';this.ctx.strokeStyle='#888';this.ctx.lineWidth=2;this.rocks.forEach(rk=>{this.ctx.beginPath();this.ctx.moveTo(rk.x,rk.y-rk.r);for(let i=0;i<6;i++){const a=(i*60*Math.PI)/180;const rad=rk.r*(0.8+Math.random()*0.4);const rx=rk.x+Math.cos(a)*rad;const ry=rk.y+Math.sin(a)*rad;this.ctx.lineTo(rx,ry);}this.ctx.closePath();this.ctx.stroke();});this.ctx.shadowBlur=0;}
             }
         };
 
-        // Initialize System
-        window.onload = function() {
-            arcadeSystem.init();
-        };
-
-        // Add keyup listener for continuous movement fix
-        document.addEventListener('keyup', (e) => {
-            if (arcadeSystem.isPlaying && arcadeSystem.activeGame && arcadeSystem.activeGame.input) {
-                arcadeSystem.activeGame.input(e);
-            }
-        });
-
+        window.onload = function() { arcadeSystem.init(); };
     </script>
 </body>
 </html>
