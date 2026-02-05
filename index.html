@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEON ARCADE // SELECTOR</title>
-    
-    <!-- Retro Pixel Font -->
+    <title>NEON ARCADE // ALL-IN-ONE</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
@@ -21,359 +19,749 @@
             --card-bg: rgba(10, 10, 10, 0.85);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
 
         body {
             background-color: var(--bg-color);
             color: white;
             font-family: 'Rajdhani', sans-serif;
-            overflow-x: hidden;
-            min-height: 100vh;
+            overflow: hidden;
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            position: relative;
         }
 
-        /* --- CRT Scanline Effect --- */
+        /* --- FX & Background --- */
         body::before {
             content: "";
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: linear-gradient(
-                rgba(18, 16, 16, 0) 50%, 
-                rgba(0, 0, 0, 0.25) 50%
-            ), linear-gradient(
-                90deg, 
-                rgba(255, 0, 0, 0.06), 
-                rgba(0, 255, 0, 0.02), 
-                rgba(0, 0, 255, 0.06)
-            );
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
             background-size: 100% 2px, 3px 100%;
             pointer-events: none;
-            z-index: 999;
+            z-index: 100;
         }
 
-        /* --- Moving Background --- */
-        .starfield {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            perspective: 500px;
-            overflow: hidden;
-        }
-
-        .stars {
-            width: 2px;
-            height: 2px;
-            background: white;
-            position: absolute;
-            border-radius: 50%;
-            box-shadow: 0 0 5px white;
-            animation: moveStars 5s linear infinite;
-        }
-
-        @keyframes moveStars {
-            from { transform: translateY(0) scale(1); opacity: 1; }
-            to { transform: translateY(100vh) scale(0); opacity: 0; }
-        }
-
-        /* --- Retro Grid Floor --- */
         .retro-grid {
-            position: fixed;
-            bottom: -50%;
-            left: -50%;
-            width: 200%;
-            height: 100%;
-            background-image: 
-                linear-gradient(var(--grid-color) 1px, transparent 1px),
-                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-            background-size: 40px 40px;
-            transform: perspective(300px) rotateX(60deg);
-            animation: gridMove 20s linear infinite;
+            position: fixed; bottom: -50%; left: -50%; width: 200%; height: 100%;
+            background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform: perspective(500px) rotateX(60deg);
+            animation: gridMove 10s linear infinite;
             z-index: -1;
             mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%);
-            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%);
+        }
+        @keyframes gridMove { 0% { transform: perspective(500px) rotateX(60deg) translateY(0); } 100% { transform: perspective(500px) rotateX(60deg) translateY(50px); } }
+
+        /* --- UI Screens --- */
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; position: absolute; top: 0; left: 0; }
+        .active-screen { display: flex; }
+
+        /* --- Menu Screen --- */
+        header { text-align: center; padding: 1rem; animation: glitch 2s infinite; margin-bottom: 2rem; }
+        h1 { font-family: 'Press Start 2P', cursive; font-size: 3rem; color: white; text-shadow: 4px 4px 0px var(--neon-pink), -4px -4px 0px var(--neon-blue); margin-bottom: 10px; }
+        .subtitle { font-size: 1.5rem; color: var(--neon-yellow); letter-spacing: 5px; text-transform: uppercase; text-shadow: 0 0 10px var(--neon-yellow); }
+
+        #game-grid {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; max-width: 1200px; overflow-y: auto; max-height: 70vh;
         }
 
-        @keyframes gridMove {
-            0% { transform: perspective(300px) rotateX(60deg) translateY(0); }
-            100% { transform: perspective(300px) rotateX(60deg) translateY(40px); }
-        }
-
-        /* --- Main Layout --- */
-        header {
-            text-align: center;
-            padding: 3rem 1rem;
-            animation: glitch 1s linear infinite;
-        }
-
-        h1 {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 3rem;
-            color: white;
-            text-transform: uppercase;
-            text-shadow: 
-                2px 2px 0px var(--neon-pink), 
-                -2px -2px 0px var(--neon-blue);
-            margin-bottom: 0.5rem;
-            letter-spacing: 2px;
-        }
-
-        .subtitle {
-            font-size: 1.2rem;
-            color: var(--neon-yellow);
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            text-shadow: 0 0 10px var(--neon-yellow);
-        }
-
-        main {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 2rem;
-            flex-wrap: wrap;
-            gap: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* --- Game Cards --- */
         .game-card {
-            background: var(--card-bg);
-            border: 2px solid var(--neon-blue);
-            width: 300px;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            box-shadow: 
-                0 0 10px var(--neon-blue),
-                inset 0 0 20px rgba(0, 255, 255, 0.2);
-            transition: all 0.3s ease;
-            position: relative;
-            cursor: pointer;
-            text-decoration: none;
-            color: white;
+            background: var(--card-bg); border: 2px solid var(--neon-blue);
+            width: 250px; padding: 20px; cursor: pointer; text-align: center;
+            box-shadow: 0 0 10px var(--neon-blue); transition: 0.3s;
         }
-
-        .game-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            border-color: var(--neon-pink);
-            box-shadow: 
-                0 0 20px var(--neon-pink),
-                inset 0 0 30px rgba(255, 0, 255, 0.2);
-        }
-
-        .game-card:hover h2 {
-            color: var(--neon-pink);
-            text-shadow: 0 0 8px var(--neon-pink);
-        }
-
-        .game-icon {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 1rem;
-            fill: white;
-            filter: drop-shadow(0 0 5px var(--neon-blue));
-            transition: fill 0.3s;
-        }
-
-        .game-card:hover .game-icon {
-            fill: var(--neon-pink);
-            filter: drop-shadow(0 0 8px var(--neon-pink));
-        }
-
-        h2 {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            line-height: 1.5;
-            color: var(--neon-blue);
-            transition: color 0.3s;
-        }
-
-        p {
-            font-size: 1rem;
-            margin-bottom: 1.5rem;
-            color: #ddd;
-            flex-grow: 1;
-        }
-
+        .game-card:hover { transform: translateY(-5px); border-color: var(--neon-pink); box-shadow: 0 0 20px var(--neon-pink); }
+        .game-card h3 { font-family: 'Press Start 2P'; font-size: 1rem; color: var(--neon-blue); margin-bottom: 10px; }
+        .game-card p { font-size: 0.9rem; margin-bottom: 15px; color: #ddd; }
         .play-btn {
-            background: transparent;
-            border: 2px solid white;
-            padding: 0.8rem 2rem;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 0.8rem;
-            color: white;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-            overflow: hidden;
-            width: 100%;
+            background: transparent; border: 2px solid white; color: white; padding: 8px 16px;
+            font-family: 'Press Start 2P'; font-size: 0.7rem; text-transform: uppercase; cursor: pointer;
         }
+        .game-card:hover .play-btn { background: white; color: black; }
+        .game-card.locked { opacity: 0.5; pointer-events: none; border-color: #555; box-shadow: none; }
 
-        .play-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: white;
-            transition: left 0.3s ease;
-            z-index: -1;
+        /* --- Game Screen --- */
+        #game-header { width: 100%; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); z-index: 10; }
+        .back-btn { font-family: 'Press Start 2P'; font-size: 0.8rem; color: var(--neon-yellow); border: 1px solid var(--neon-yellow); background: transparent; padding: 5px 10px; cursor: pointer; text-decoration: none; }
+        .back-btn:hover { background: var(--neon-yellow); color: black; }
+        .score-display { font-family: 'Press Start 2P'; font-size: 1.2rem; color: white; }
+
+        #game-wrapper { position: relative; box-shadow: 0 0 30px rgba(0,0,0,0.8); border: 4px solid #333; margin-top: 10px; }
+        canvas { background: #000; display: block; }
+
+        #game-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 20; text-align: center;
         }
+        #game-title { font-family: 'Press Start 2P'; font-size: 2rem; color: var(--neon-pink); margin-bottom: 20px; text-shadow: 0 0 10px var(--neon-pink); }
+        #game-message { font-size: 1.2rem; margin-bottom: 30px; line-height: 1.5; color: #ccc; }
+        .start-btn { font-family: 'Press Start 2P'; font-size: 1.2rem; color: var(--neon-green); border: 2px solid var(--neon-green); background: transparent; padding: 15px 30px; cursor: pointer; animation: pulse 1s infinite alternate; }
+        .start-btn:hover { background: var(--neon-green); color: black; }
 
-        .game-card:hover .play-btn {
-            color: black;
-            border-color: white;
-            font-weight: bold;
-            box-shadow: 0 0 15px white;
-        }
+        @keyframes pulse { from { text-shadow: 0 0 5px var(--neon-green); } to { text-shadow: 0 0 20px var(--neon-green); } }
+        @keyframes glitch { 2%, 64% { transform: translate(2px,0) skew(0deg); } 4%, 60% { transform: translate(-2px,0) skew(0deg); } 62% { transform: translate(0,0) skew(5deg); } }
 
-        .game-card:hover .play-btn::before {
-            left: 0;
-        }
-
-        /* --- Footer --- */
-        footer {
-            text-align: center;
-            padding: 2rem;
-            font-size: 0.8rem;
-            color: #777;
-            z-index: 10;
-        }
-
-        /* --- Glitch Animation --- */
-        @keyframes glitch {
-            2%, 64% { transform: translate(2px,0) skew(0deg); }
-            4%, 60% { transform: translate(-2px,0) skew(0deg); }
-            62% { transform: translate(0,0) skew(5deg); }
-        }
-
-        /* --- Mobile Responsive --- */
-        @media (max-width: 600px) {
-            h1 { font-size: 1.8rem; }
-            .subtitle { font-size: 0.9rem; letter-spacing: 2px; }
-            .game-card { width: 100%; }
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            canvas { width: 100%; height: auto; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Background Elements -->
-    <div class="starfield" id="starfield"></div>
+    <!-- Background FX -->
     <div class="retro-grid"></div>
 
-    <header>
-        <h1>NEON ARCADE</h1>
-        <div class="subtitle">System Ready // Select Game</div>
-    </header>
+    <!-- MENU SCREEN -->
+    <div id="menu-screen" class="screen active-screen">
+        <header>
+            <h1>NEON ARCADE</h1>
+            <div class="subtitle">SELECT SYSTEM</div>
+        </header>
 
-    <main>
-        <!-- Game 1 -->
-        <a href="snake.html" class="game-card">
-            <svg class="game-icon" viewBox="0 0 24 24">
-                <path d="M21,6H3A2,2 0 0,0 1,8V16A2,2 0 0,0 3,18H21A2,2 0 0,0 23,16V8A2,2 0 0,0 21,6M21,16H3V8H21V16M6,13H11V11H6M13,13H18V11H13M6,9H8V15H6M13,9H18V10H13M6,9H8V10H6V9Z" />
-            </svg>
-            <h2>CLASSIC SNAKE</h2>
-            <p>The classic Snake game, reimagined. Eat power-ups, grow your tail, and don't crash into the walls.</p>
-            <div class="play-btn">INSERT COIN</div>
-        </a>
+        <div id="game-grid">
+            <!-- Game 1: Snake -->
+            <div class="game-card" onclick="arcadeSystem.loadGame('snake')">
+                <h3>NEON SNAKE</h3>
+                <p>Eat bits, grow longer, don't crash. Classic logic.</p>
+                <div class="play-btn">PLAY</div>
+            </div>
 
-        <!-- Game 2 -->
-        <a href="pong.html" class="game-card">
-            <svg class="game-icon" viewBox="0 0 24 24">
-                <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8Z" />
-            </svg>
-            <h2>PONG</h2>
-            <p>The classic pong game, with 2 player mode and vs computer.</p>
-            <div class="play-btn">INSERT COIN</div>
-        </a>
-    </main>
+            <!-- Game 2: Shooter -->
+            <div class="game-card" onclick="arcadeSystem.loadGame('shooter')">
+                <h3>CYBER SHOOTER</h3>
+                <p>Defend the grid against viral invaders.</p>
+                <div class="play-btn">PLAY</div>
+            </div>
 
-    <footer>
-        <p>&copy; 2023 NEON ARCADE SYSTEMS. ALL RIGHTS RESERVED.</p>
-    </footer>
+            <!-- Game 3: Runner -->
+            <div class="game-card" onclick="arcadeSystem.loadGame('runner')">
+                <h3>GRID RUNNER</h3>
+                <p>Sprint through the city. Jump the glitches.</p>
+                <div class="play-btn">PLAY</div>
+            </div>
+
+            <!-- Game 4: Dodger -->
+            <div class="game-card" onclick="arcadeSystem.loadGame('dodger')">
+                <h3>VOID DODGER</h3>
+                <p>Pilot through the asteroid belt. Survive.</p>
+                <div class="play-btn">PLAY</div>
+            </div>
+
+            <!-- Placeholder -->
+            <div class="game-card locked">
+                <h3>TRON CYCLES</h3>
+                <p>COMING SOON</p>
+                <div class="play-btn">LOCKED</div>
+            </div>
+             <!-- Placeholder -->
+             <div class="game-card locked">
+                <h3>HACKER PUZZLE</h3>
+                <p>COMING SOON</p>
+                <div class="play-btn">LOCKED</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAMEPLAY SCREEN -->
+    <div id="game-screen" class="screen">
+        <div id="game-header">
+            <button class="back-btn" onclick="arcadeSystem.returnToMenu()">&lt; BACK TO ARCADE</button>
+            <div class="score-display">SCORE: <span id="score-val">0</span></div>
+        </div>
+        
+        <div id="game-wrapper">
+            <canvas id="game-canvas" width="800" height="600"></canvas>
+            
+            <div id="game-overlay">
+                <div id="game-title">GAME TITLE</div>
+                <div id="game-message">
+                    Press SPACE to Start<br>
+                    <span style="font-size: 0.8rem; color: #888;">Use ARROW KEYS to move</span>
+                </div>
+                <button class="start-btn" onclick="arcadeSystem.startGame()">INSERT COIN</button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Dynamic Starfield Generation
-        const starfield = document.getElementById('starfield');
-        const starCount = 100;
+        /* =========================================
+           ARCADE SYSTEM CORE
+           Handles switching between menu and games
+           ========================================= */
+        const arcadeSystem = {
+            canvas: document.getElementById('game-canvas'),
+            ctx: document.getElementById('game-canvas').getContext('2d'),
+            overlay: document.getElementById('game-overlay'),
+            titleEl: document.getElementById('game-title'),
+            msgEl: document.getElementById('game-message'),
+            btnEl: document.querySelector('.start-btn'),
+            scoreEl: document.getElementById('score-val'),
+            
+            currentGameId: null,
+            activeGame: null,
+            isPlaying: false,
+            animationFrameId: null,
 
-        for (let i = 0; i < starCount; i++) {
-            const star = document.createElement('div');
-            star.classList.add('stars');
-            
-            // Randomize position
-            const x = Math.random() * 100;
-            const delay = Math.random() * 5;
-            const duration = Math.random() * 3 + 2; // between 2 and 5 seconds
-            
-            star.style.left = `${x}%`;
-            star.style.animationDelay = `${delay}s`;
-            star.style.animationDuration = `${duration}s`;
-            
-            starfield.appendChild(star);
-        }
+            // Initialize
+            init: function() {
+                this.resizeCanvas();
+                window.addEventListener('resize', () => this.resizeCanvas());
+                document.addEventListener('keydown', (e) => this.handleInput(e));
+            },
 
-        // Add Hover Sound Effects using Web Audio API (Simple Beep)
-        // Only initializing on first user interaction to respect browser policies
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        
-        function playHoverSound() {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
+            resizeCanvas: function() {
+                // Keep aspect ratio but fit screen
+                const aspect = 800/600;
+                const h = window.innerHeight - 100;
+                const w = h * aspect;
+                
+                if (w > window.innerWidth - 20) {
+                    this.canvas.style.width = (window.innerWidth - 40) + 'px';
+                    this.canvas.style.height = ((window.innerWidth - 40) / aspect) + 'px';
+                } else {
+                    this.canvas.style.width = w + 'px';
+                    this.canvas.style.height = h + 'px';
+                }
+            },
+
+            loadGame: function(gameId) {
+                // Stop anything running
+                this.stopGameLoop();
+                
+                // Switch Screens
+                document.getElementById('menu-screen').classList.remove('active-screen');
+                document.getElementById('game-screen').classList.add('active-screen');
+
+                // Setup specific game
+                this.currentGameId = gameId;
+                this.activeGame = games[gameId];
+                
+                // Reset Overlay
+                this.titleEl.innerText = this.activeGame.name;
+                this.msgEl.innerHTML = this.activeGame.instructions;
+                this.btnEl.innerText = "INSERT COIN";
+                this.overlay.style.display = 'flex';
+                this.scoreEl.innerText = '0';
+                
+                // Init Game logic
+                this.activeGame.init(this.ctx, this.canvas);
+                
+                // Draw initial frame so it's not black
+                this.activeGame.draw();
+            },
+
+            startGame: function() {
+                if (!this.activeGame) return;
+                
+                this.overlay.style.display = 'none';
+                this.isPlaying = true;
+                this.scoreEl.innerText = '0';
+                
+                this.activeGame.reset();
+                this.gameLoop();
+            },
+
+            gameOver: function(finalScore) {
+                this.isPlaying = false;
+                this.overlay.style.display = 'flex';
+                this.msgEl.innerHTML = `GAME OVER<br>SCORE: ${finalScore}`;
+                this.btnEl.innerText = "TRY AGAIN";
+            },
+
+            returnToMenu: function() {
+                this.stopGameLoop();
+                this.isPlaying = false;
+                this.activeGame = null;
+                document.getElementById('game-screen').classList.remove('active-screen');
+                document.getElementById('menu-screen').classList.add('active-screen');
+            },
+
+            stopGameLoop: function() {
+                if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId);
+            },
+
+            gameLoop: function() {
+                if (!this.isPlaying) return;
+
+                // Clear Canvas
+                this.ctx.fillStyle = '#050505';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+                // Update & Draw
+                const status = this.activeGame.update();
+                this.activeGame.draw();
+
+                // Update Score UI
+                this.scoreEl.innerText = this.activeGame.score;
+
+                // Check Game Over
+                if (status === 'GAME_OVER') {
+                    this.gameOver(this.activeGame.score);
+                } else {
+                    this.animationFrameId = requestAnimationFrame(() => this.gameLoop());
+                }
+            },
+
+            handleInput: function(e) {
+                if (this.isPlaying && this.activeGame) {
+                    if (e.code === 'Space') {
+                        e.preventDefault(); // Stop scrolling
+                    }
+                    this.activeGame.input(e);
+                }
             }
-            
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            
-            oscillator.type = 'square'; // Retro 8-bit sound
-            oscillator.frequency.setValueAtTime(440, audioCtx.currentTime); // A4
-            oscillator.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1); // Slide up
-            
-            gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.1);
-        }
+        };
 
-        // Attach sound to buttons
-        const buttons = document.querySelectorAll('.game-card');
-        buttons.forEach(btn => {
-            btn.addEventListener('mouseenter', playHoverSound);
+        /* =========================================
+           GAME ENGINE / LOGIC CLASSES
+           ========================================= */
+        
+        const games = {
+            // --- 1. NEON SNAKE ---
+            'snake': {
+                name: "NEON SNAKE",
+                instructions: "Arrows to Move. Eat green blocks. Don't hit walls or tail.",
+                score: 0,
+                grid: 20,
+                snake: [],
+                direction: 'RIGHT',
+                nextDirection: 'RIGHT',
+                food: {x: 0, y: 0},
+                timer: 0,
+                speed: 5, // Updates per second
+                
+                init: function(ctx, canvas) {
+                    this.ctx = ctx;
+                    this.canvas = canvas;
+                    this.cols = canvas.width / this.grid;
+                    this.rows = canvas.height / this.grid;
+                    this.reset();
+                },
+
+                reset: function() {
+                    this.snake = [{x: 10, y: 10}, {x: 9, y: 10}, {x: 8, y: 10}];
+                    this.direction = 'RIGHT';
+                    this.nextDirection = 'RIGHT';
+                    this.score = 0;
+                    this.placeFood();
+                },
+
+                placeFood: function() {
+                    this.food = {
+                        x: Math.floor(Math.random() * this.cols),
+                        y: Math.floor(Math.random() * this.rows)
+                    };
+                    // Don't place on snake
+                    for(let part of this.snake) {
+                        if(part.x === this.food.x && part.y === this.food.y) this.placeFood();
+                    }
+                },
+
+                input: function(e) {
+                    const key = e.key;
+                    if ((key === 'ArrowLeft' || key === 'a') && this.direction !== 'RIGHT') this.nextDirection = 'LEFT';
+                    if ((key === 'ArrowUp' || key === 'w') && this.direction !== 'DOWN') this.nextDirection = 'UP';
+                    if ((key === 'ArrowRight' || key === 'd') && this.direction !== 'LEFT') this.nextDirection = 'RIGHT';
+                    if ((key === 'ArrowDown' || key === 's') && this.direction !== 'UP') this.nextDirection = 'DOWN';
+                },
+
+                update: function() {
+                    // Throttle speed
+                    this.timer++;
+                    if (this.timer < (60 / this.speed)) return 'OK';
+                    this.timer = 0;
+
+                    this.direction = this.nextDirection;
+                    const head = { ...this.snake[0] };
+
+                    if (this.direction === 'LEFT') head.x--;
+                    if (this.direction === 'UP') head.y--;
+                    if (this.direction === 'RIGHT') head.x++;
+                    if (this.direction === 'DOWN') head.y++;
+
+                    // Wall Collision
+                    if (head.x < 0 || head.x >= this.cols || head.y < 0 || head.y >= this.rows) return 'GAME_OVER';
+                    
+                    // Self Collision
+                    for (let part of this.snake) {
+                        if (head.x === part.x && head.y === part.y) return 'GAME_OVER';
+                    }
+
+                    this.snake.unshift(head);
+
+                    // Eat Food
+                    if (head.x === this.food.x && head.y === this.food.y) {
+                        this.score += 10;
+                        this.speed = Math.min(15, 5 + Math.floor(this.score / 50)); // Increase speed
+                        this.placeFood();
+                    } else {
+                        this.snake.pop();
+                    }
+
+                    return 'OK';
+                },
+
+                draw: function() {
+                    // Draw Food
+                    this.ctx.shadowBlur = 15;
+                    this.ctx.shadowColor = '#39ff14';
+                    this.ctx.fillStyle = '#39ff14';
+                    this.ctx.fillRect(this.food.x * this.grid, this.food.y * this.grid, this.grid - 2, this.grid - 2);
+
+                    // Draw Snake
+                    this.ctx.shadowBlur = 10;
+                    this.ctx.shadowColor = '#00ffff';
+                    this.snake.forEach((part, index) => {
+                        this.ctx.fillStyle = index === 0 ? '#fff' : '#00ffff'; // White head
+                        this.ctx.fillRect(part.x * this.grid, part.y * this.grid, this.grid - 2, this.grid - 2);
+                    });
+                    
+                    // Reset effects
+                    this.ctx.shadowBlur = 0;
+                }
+            },
+
+            // --- 2. CYBER SHOOTER ---
+            'shooter': {
+                name: "CYBER SHOOTER",
+                instructions: "Arrows to Move. Space to Shoot. Destroy incoming enemies.",
+                score: 0,
+                player: { x: 400, y: 550, w: 30, h: 30 },
+                bullets: [],
+                enemies: [],
+                enemyTimer: 0,
+                keys: {},
+
+                init: function(ctx, canvas) {
+                    this.ctx = ctx;
+                    this.canvas = canvas;
+                    this.reset();
+                },
+
+                reset: function() {
+                    this.score = 0;
+                    this.player.x = this.canvas.width / 2 - 15;
+                    this.bullets = [];
+                    this.enemies = [];
+                    this.keys = {};
+                },
+
+                input: function(e) {
+                    if (e.type === 'keydown') {
+                        this.keys[e.key] = true;
+                        if (e.code === 'Space') {
+                            this.shoot();
+                        }
+                    }
+                    if (e.type === 'keyup') {
+                        this.keys[e.key] = false;
+                    }
+                },
+
+                shoot: function() {
+                    if(this.bullets.length < 10) { // Limit bullets
+                        this.bullets.push({ x: this.player.x + 12, y: this.player.y, w: 6, h: 10 });
+                    }
+                },
+
+                update: function() {
+                    // Move Player
+                    if (this.keys['ArrowLeft'] && this.player.x > 0) this.player.x -= 7;
+                    if (this.keys['ArrowRight'] && this.player.x < this.canvas.width - this.player.w) this.player.x += 7;
+
+                    // Move Bullets
+                    this.bullets.forEach(b => b.y -= 10);
+                    this.bullets = this.bullets.filter(b => b.y > -20);
+
+                    // Spawn Enemies
+                    this.enemyTimer++;
+                    if (this.enemyTimer > 40) {
+                        this.enemyTimer = 0;
+                        const size = 30;
+                        this.enemies.push({
+                            x: Math.random() * (this.canvas.width - size),
+                            y: -size,
+                            w: size, h: size,
+                            speed: 2 + Math.random() * 3
+                        });
+                    }
+
+                    // Move Enemies & Collision
+                    for (let i = this.enemies.length - 1; i >= 0; i--) {
+                        let e = this.enemies[i];
+                        e.y += e.speed;
+
+                        // Collision with Bullets
+                        for (let j = this.bullets.length - 1; j >= 0; j--) {
+                            let b = this.bullets[j];
+                            if (b.x < e.x + e.w && b.x + b.w > e.x && b.y < e.y + e.h && b.y + b.h > e.y) {
+                                // Hit
+                                this.enemies.splice(i, 1);
+                                this.bullets.splice(j, 1);
+                                this.score += 100;
+                                break;
+                            }
+                        }
+
+                        // Collision with Player
+                        if (e.y + e.h > this.player.y && e.x < this.player.x + this.player.w && e.x + e.w > this.player.x) {
+                            return 'GAME_OVER';
+                        }
+
+                        // Remove off screen
+                        if (e.y > this.canvas.height) this.enemies.splice(i, 1);
+                    }
+
+                    return 'OK';
+                },
+
+                draw: function() {
+                    // Player
+                    this.ctx.shadowBlur = 15;
+                    this.ctx.shadowColor = '#ff00ff';
+                    this.ctx.fillStyle = '#ff00ff';
+                    this.ctx.fillRect(this.player.x, this.player.y, this.player.w, this.player.h);
+
+                    // Bullets
+                    this.ctx.shadowColor = '#fff01f';
+                    this.ctx.fillStyle = '#fff01f';
+                    this.bullets.forEach(b => this.ctx.fillRect(b.x, b.y, b.w, b.h));
+
+                    // Enemies
+                    this.ctx.shadowColor = '#ff0000';
+                    this.ctx.fillStyle = '#ff0000';
+                    this.enemies.forEach(e => this.ctx.fillRect(e.x, e.y, e.w, e.h));
+                    
+                    this.ctx.shadowBlur = 0;
+                }
+            },
+
+            // --- 3. GRID RUNNER ---
+            'runner': {
+                name: "GRID RUNNER",
+                instructions: "Space or Up Arrow to Jump. Avoid the red pillars.",
+                score: 0,
+                player: { x: 100, y: 0, w: 30, h: 30, dy: 0, grounded: true },
+                gravity: 0.8,
+                jumpPower: -15,
+                obstacles: [],
+                groundY: 500,
+                speed: 6,
+                frame: 0,
+
+                init: function(ctx, canvas) {
+                    this.ctx = ctx;
+                    this.canvas = canvas;
+                    this.groundY = canvas.height - 50;
+                    this.reset();
+                },
+
+                reset: function() {
+                    this.score = 0;
+                    this.player.y = this.groundY - this.player.h;
+                    this.player.dy = 0;
+                    this.obstacles = [];
+                    this.speed = 6;
+                    this.frame = 0;
+                },
+
+                input: function(e) {
+                    if ((e.code === 'Space' || e.key === 'ArrowUp') && this.player.grounded) {
+                        this.player.dy = this.jumpPower;
+                        this.player.grounded = false;
+                    }
+                },
+
+                update: function() {
+                    this.frame++;
+                    this.score++;
+
+                    // Physics
+                    this.player.dy += this.gravity;
+                    this.player.y += this.player.dy;
+
+                    if (this.player.y > this.groundY - this.player.h) {
+                        this.player.y = this.groundY - this.player.h;
+                        this.player.dy = 0;
+                        this.player.grounded = true;
+                    }
+
+                    // Spawn Obstacles
+                    if (this.frame % 90 === 0 || (Math.random() < 0.01 && this.frame > 100)) {
+                        this.obstacles.push({
+                            x: this.canvas.width,
+                            y: this.groundY - 40,
+                            w: 30,
+                            h: 40
+                        });
+                        this.speed += 0.1; // Slowly increase speed
+                    }
+
+                    // Move Obstacles
+                    for (let i = this.obstacles.length - 1; i >= 0; i--) {
+                        let o = this.obstacles[i];
+                        o.x -= this.speed;
+
+                        // Collision
+                        if (
+                            this.player.x < o.x + o.w &&
+                            this.player.x + this.player.w > o.x &&
+                            this.player.y < o.y + o.h &&
+                            this.player.y + this.player.h > o.y
+                        ) {
+                            return 'GAME_OVER';
+                        }
+
+                        if (o.x + o.w < 0) this.obstacles.splice(i, 1);
+                    }
+
+                    return 'OK';
+                },
+
+                draw: function() {
+                    // Ground Line
+                    this.ctx.strokeStyle = '#00ffff';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(0, this.groundY);
+                    this.ctx.lineTo(this.canvas.width, this.groundY);
+                    this.ctx.stroke();
+
+                    // Player
+                    this.ctx.shadowBlur = 10;
+                    this.ctx.shadowColor = '#00ffff';
+                    this.ctx.fillStyle = '#00ffff';
+                    this.ctx.fillRect(this.player.x, this.player.y, this.player.w, this.player.h);
+
+                    // Obstacles
+                    this.ctx.shadowColor = '#ff0000';
+                    this.ctx.fillStyle = '#ff0000';
+                    this.obstacles.forEach(o => this.ctx.fillRect(o.x, o.y, o.w, o.h));
+                    
+                    this.ctx.shadowBlur = 0;
+                }
+            },
+
+            // --- 4. VOID DODGER ---
+            'dodger': {
+                name: "VOID DODGER",
+                instructions: "Arrow Keys to move freely. Don't touch the floating debris.",
+                score: 0,
+                player: { x: 400, y: 300, r: 10 },
+                rocks: [],
+                frame: 0,
+
+                init: function(ctx, canvas) {
+                    this.ctx = ctx;
+                    this.canvas = canvas;
+                    this.reset();
+                },
+
+                reset: function() {
+                    this.score = 0;
+                    this.player.x = this.canvas.width / 2;
+                    this.player.y = this.canvas.height / 2;
+                    this.rocks = [];
+                    this.frame = 0;
+                },
+
+                input: function(e) {
+                    const speed = 8;
+                    if (e.key === 'ArrowUp') this.player.y -= speed;
+                    if (e.key === 'ArrowDown') this.player.y += speed;
+                    if (e.key === 'ArrowLeft') this.player.x -= speed;
+                    if (e.key === 'ArrowRight') this.player.x += speed;
+
+                    // Boundaries
+                    this.player.x = Math.max(10, Math.min(this.canvas.width - 10, this.player.x));
+                    this.player.y = Math.max(10, Math.min(this.canvas.height - 10, this.player.y));
+                },
+
+                update: function() {
+                    this.frame++;
+                    if(this.frame % 10 === 0) this.score++;
+
+                    // Spawn Rocks (Edges only)
+                    if (this.frame % 20 === 0) {
+                        const side = Math.floor(Math.random() * 4); // 0:top, 1:right, 2:bottom, 3:left
+                        let r = 15 + Math.random() * 20;
+                        let x, y, dx, dy;
+                        const speed = 3 + (this.score / 500);
+
+                        if (side === 0) { x = Math.random()*this.canvas.width; y = -r; dx = (Math.random()-0.5)*2; dy = speed; }
+                        else if (side === 1) { x = this.canvas.width+r; y = Math.random()*this.canvas.height; dx = -speed; dy = (Math.random()-0.5)*2; }
+                        else if (side === 2) { x = Math.random()*this.canvas.width; y = this.canvas.height+r; dx = (Math.random()-0.5)*2; dy = -speed; }
+                        else { x = -r; y = Math.random()*this.canvas.height; dx = speed; dy = (Math.random()-0.5)*2; }
+
+                        this.rocks.push({x, y, dx, dy, r});
+                    }
+
+                    // Update Rocks
+                    for (let i = this.rocks.length - 1; i >= 0; i--) {
+                        let rock = this.rocks[i];
+                        rock.x += rock.dx;
+                        rock.y += rock.dy;
+
+                        // Collision (Circle vs Circle)
+                        const dist = Math.hypot(this.player.x - rock.x, this.player.y - rock.y);
+                        if (dist < this.player.r + rock.r) return 'GAME_OVER';
+
+                        // Remove offscreen
+                        if (rock.x < -50 || rock.x > this.canvas.width+50 || rock.y < -50 || rock.y > this.canvas.height+50) {
+                            this.rocks.splice(i, 1);
+                        }
+                    }
+
+                    return 'OK';
+                },
+
+                draw: function() {
+                    // Player
+                    this.ctx.shadowBlur = 15;
+                    this.ctx.shadowColor = '#ffffff';
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.beginPath();
+                    this.ctx.arc(this.player.x, this.player.y, this.player.r, 0, Math.PI*2);
+                    this.ctx.fill();
+
+                    // Rocks
+                    this.ctx.shadowColor = '#888888';
+                    this.ctx.strokeStyle = '#888888';
+                    this.ctx.lineWidth = 2;
+                    this.rocks.forEach(rock => {
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(rock.x, rock.y - rock.r);
+                        for(let i=0; i<6; i++) {
+                            const angle = (i * 60 * Math.PI) / 180;
+                            const r = rock.r * (0.8 + Math.random()*0.4); // Jagged look
+                            const rx = rock.x + Math.cos(angle) * r;
+                            const ry = rock.y + Math.sin(angle) * r;
+                            this.ctx.lineTo(rx, ry);
+                        }
+                        this.ctx.closePath();
+                        this.ctx.stroke();
+                    });
+                    
+                    this.ctx.shadowBlur = 0;
+                }
+            }
+        };
+
+        // Initialize System
+        window.onload = function() {
+            arcadeSystem.init();
+        };
+
+        // Add keyup listener for continuous movement fix
+        document.addEventListener('keyup', (e) => {
+            if (arcadeSystem.isPlaying && arcadeSystem.activeGame && arcadeSystem.activeGame.input) {
+                arcadeSystem.activeGame.input(e);
+            }
         });
 
-        // Simple startup animation effect
-        window.addEventListener('load', () => {
-            document.body.style.opacity = 0;
-            let opacity = 0;
-            const fadeIn = setInterval(() => {
-                if (opacity >= 1) clearInterval(fadeIn);
-                document.body.style.opacity = opacity;
-                opacity += 0.05;
-            }, 30);
-        });
     </script>
 </body>
 </html>
